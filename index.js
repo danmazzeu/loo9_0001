@@ -10,8 +10,6 @@ const axios = require('axios');
 
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
-const userCooldown = {};
-
 function getMoment() {
     return moment().format('DD-MM-YYYY - HH:mm:ss');
 }
@@ -64,17 +62,6 @@ bot.on("message", async (ctx) => {
             await ctx.reply(`⚠️ *${ctx.from.first_name}* - Não é permitido enviar imagens, vídeos (exceto notas de vídeo), áudios (exceto mensagens de voz), links, localizações, carteiras, arquivos, enquetes ou contatos.`, { parse_mode: "Markdown" });
             return;
         }
-
-        if (userCooldown[userId] && now - userCooldown[userId] < 30000) {
-            const timeLeft = Math.ceil((30000 - (now - userCooldown[userId])) / 1000);
-
-            await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
-
-            await ctx.reply(`⏳ *${ctx.from.first_name}* - Por favor, aguarde ${timeLeft} segundos antes de enviar outra solicitação.`, { parse_mode: "Markdown" });
-            return;
-        }
-
-        userCooldown[userId] = now;
 
         if (ctx.message.new_chat_members) {
             const newMembers = ctx.message.new_chat_members;
