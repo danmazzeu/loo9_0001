@@ -233,7 +233,7 @@ const handleWarCommand = async (ctx) => {
         await ctx.reply(memberInfoMessage, { parse_mode: 'Markdown' });
     } catch (err) {
         console.error(err);
-        await ctx.reply("_Erro ao obter informações da guerra._");
+        await ctx.reply("_Erro ao obter informações da guerra._", { parse_mode: 'Markdown' });
     }
 };
 
