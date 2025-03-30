@@ -43,7 +43,7 @@ bot.on("message", async (ctx) => {
         console.log(ctx.chat.type);
 
         if (ctx.chat.type === 'private') {
-            await ctx.reply('Este bot só funciona em grupos.\nSegue abaixo o link do grupo:\nhttps://t.me/loo9_clashofclans_pt', { parse_mode: "Markdown" });
+            await ctx.reply('Este bot só funciona em grupos.\nSegue abaixo o link do grupo:\n\nhttps://t.me/loo9_clashofclans_pt', { parse_mode: "Markdown" });
             return;
         }
 
