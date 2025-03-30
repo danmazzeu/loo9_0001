@@ -69,6 +69,7 @@ bot.on("message", async (ctx) => {
 
         if (ctx.chat.type === 'private') {
             await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
+            console.log(`[${getMoment()}] ${ctx.from.first_name}: Mensagem privada`);
             await ctx.reply('Este bot só funciona em grupos.\nSegue abaixo o link do grupo:\n\nhttps://t.me/loo9_clashofclans_pt', { parse_mode: "Markdown" });
             return;
         }
