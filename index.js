@@ -40,6 +40,8 @@ bot.on("message", async (ctx) => {
         const chatId = ctx.chat.id;
         const now = Date.now();
 
+        console.log(ctx.chat.type);
+
         console.log(`[${getMoment()}] Chat id: ${chatId}, User id: ${userId}`);
 
         if (ctx.chat.type === 'private') {
