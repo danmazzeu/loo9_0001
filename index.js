@@ -46,6 +46,8 @@ bot.on("message", async (ctx) => {
     try {
         const userId = ctx.from.id;
         let now = Date.now();
+        const chatId = ctx.chat.id;
+        console.log(chatId);
 
         if (
             ctx.message.photo || 
