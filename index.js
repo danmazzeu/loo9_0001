@@ -26,6 +26,7 @@ start - Mensagem de boas vindas.
 comandos - Todos os comandos disponíveis podem ser encontrados aqui.
 jogador - Obtenha informações detalhadas sobre o perfil de um jogador.
 clan - Obtenha informações gerais sobre um clã.
+raid - Obtenha informações gerais sobre uma raid.
 guerra - Obtenha informações sobre a guerra atual de um clã.
 bilhete - Obtenha informações sobre o bilhete dourado atual.
 tutorial - Imagem tutorial para conseguir a Tag, que serão utilizadas nos comandos.
@@ -45,7 +46,6 @@ const menu = [
 bot.on("message", async (ctx) => {
     try {
         const userId = ctx.from.id;
-        let now = Date.now();
         const chatId = ctx.chat.id;
         console.log('Chat id: ' + chatId);
 

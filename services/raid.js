@@ -37,6 +37,16 @@ const handleRaidCommand = async (ctx) => {
 
         console.log(raidInfo);
 
+        if (raidInfo && !raidInfo.error) {
+            let raidMessage = `*Informações do Raid do Clã ${tag}*\n\n`;
+            raidMessage += `*Distrito Capital:* ${raidInfo.capitalDistrict.name}\n`;
+            raidMessage += `*Ataques:* ${raidInfo.attackCount}\n`;
+            raidMessage += `*Destruição:* ${raidInfo.destructionPercentage}%\n`;
+            raidMessage += `*Distritos Atacados:* ${raidInfo.districtsAttacked.map(district => district.name).join(', ')}\n`;
+            // Adicione mais informações conforme necessário
+            await ctx.reply(raidMessage, { parse_mode: "Markdown" });
+        }
+
         if (!raidInfo) {
             await ctx.reply(`*${userName}* - Clã não encontrado ou tag inválida.`, { parse_mode: "Markdown" });
             return;
