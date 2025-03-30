@@ -36,6 +36,16 @@ const getClanInfo = async (clanTag) => {
     }
 };
 
+const getRaidInfo = async (clanTag) => {
+    try {
+        const encodedTag = encodeURIComponent(clanTag);
+        const response = await axios.get(`${CLASH_API_URL}/clans/${encodedTag}/capitalraidseasons`, { headers });
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+};
+
 const getWarInfo = async (clanTag) => {
     try {
         const encodedTag = encodeURIComponent(clanTag);
@@ -58,7 +68,8 @@ const getGoldPassInfo = async () => {
 
 module.exports = {
     getPlayerInfo,
-    getClanInfo,
     getWarInfo,
+    getClanInfo,
+    getRaidInfo,
     getGoldPassInfo
 };

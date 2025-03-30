@@ -1,12 +1,13 @@
 require('dotenv').config();
 const path = require('path');
 const { Telegraf } = require('telegraf');
-const { handlePlayerCommand } = require('./services/player');
-const { handleWarCommand } = require('./services/war');
-const { handleClanCommand } = require('./services/clan');
-const { handleGoldPassCommand } = require('./services/goldpass');
 const moment = require('moment');
 const axios = require('axios');
+const { handlePlayerCommand } = require('./services/player');
+const { handleClanCommand } = require('./services/clan');
+const { handleRaidCommand } = require('./services/clan');
+const { handleWarCommand } = require('./services/war');
+const { handleGoldPassCommand } = require('./services/goldpass');
 
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
@@ -35,8 +36,9 @@ const menu = [
     "*/comandos* \nTodos os comandos disponíveis podem ser encontrados aqui.\n",
     "*/jogador <tag do jogador>* \nObtenha informações detalhadas sobre o perfil de um jogador.\n",
     "*/clan <tag do clã>* \nObtenha informações gerais sobre um clã.\n",
+    "*/raid <tag do clã>* \nObtenha informações gerais sobre a raid de um clã.\n",
     "*/guerra* <tag do clã> \nObtenha informações sobre a guerra atual de um clã.\n",
-    "*/bilhete* \nObtenha informações sobre o bilhete dourado atual\n",
+    "*/bilhete* \nObtenha informações sobre o bilhete dourado atual.\n",
     "*/tutorial* \nImagem tutorial para conseguir a Tag, que serão utilizadas nos comandos.",
 ].join("\n");
 
@@ -101,12 +103,16 @@ bot.on("message", async (ctx) => {
                 await handlePlayerCommand(ctx);
                 break;
 
-            case "/guerra":
-                await handleWarCommand(ctx);
-                break;
-
             case "/clan":
                 await handleClanCommand(ctx);
+                break;
+
+            case "/raid":
+                await handleRaidCommand(ctx);
+                break;
+
+            case "/guerra":
+                await handleWarCommand(ctx);
                 break;
 
             case "/bilhete":

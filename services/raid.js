@@ -1,0 +1,53 @@
+const { getRaidInfo } = require('../repositories/repository');
+const moment = require('moment-timezone');
+
+const logMessage = async (ctx) => {
+    try {
+        const now = moment().tz('America/Sao_Paulo').format('DD/MM/YYYY - HH:mm:ss');
+        const userName = ctx.from.username || ctx.from.first_name;
+        const messageText = ctx.message.text;
+
+        const logEntry = `[${now}] ${userName}: ${messageText}`;
+        console.log(logEntry);
+    } catch (err) {
+        console.error('Erro ao registrar mensagem:', err);
+    }
+};
+
+const handleRaidCommand = async (ctx) => {
+    try {
+        await logMessage(ctx);
+
+        const message = ctx.message.text.trim();
+        const clanTag = message.match(/#\w+/);
+        const userName = ctx.from.username || `${ctx.from.first_name}`;
+
+        if (!clanTag || !clanTag[0]) {
+            const welcomeMessage = [
+                `*Comando /raid selecionado*\n`,
+                "Este comando fornece informações detalhadas sobre o raid de um clan.",
+                "Para usá-lo, basta escrever */raid <TagDoClã>*"
+            ].join("\n");
+            await ctx.reply(welcomeMessage, { parse_mode: "Markdown" });
+            return;
+        }
+
+        const tag = clanTag[0];
+        const clanInfo = await getRaidInfo(tag);
+
+        if (!clanInfo) {
+            await ctx.reply(`*${userName}* - Clã não encontrado ou tag inválida.`, { parse_mode: "Markdown" });
+            return;
+        }
+
+        if (clanInfo.error) {
+            await ctx.reply(`⚠️ *${userName}*, Servidor está em manutenção no momento. Tente novamente mais tarde.`, { parse_mode: "Markdown" });
+            return;
+        }
+    } catch (error) {
+        console.error("Erro no comando /raid:", error);
+        await ctx.reply("Ocorreu um erro ao processar o comando. Tente novamente mais tarde.", { parse_mode: "Markdown" });
+    }
+};
+
+module.exports = { handleRaidCommand };
