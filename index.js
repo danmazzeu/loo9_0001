@@ -5,7 +5,7 @@ const moment = require('moment');
 const axios = require('axios');
 const { handlePlayerCommand } = require('./services/player');
 const { handleClanCommand } = require('./services/clan');
-const { handleRaidCommand } = require('./services/clan');
+const { handleRaidCommand } = require('./services/raid');
 const { handleWarCommand } = require('./services/war');
 const { handleGoldPassCommand } = require('./services/goldpass');
 
