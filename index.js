@@ -22,6 +22,16 @@ const welcomeMessage = (firstName) => [
     "Digite */comandos* para ver as opções de comandos."
 ].join("\n");
 
+/* 
+start - Mensagem de boas vindas.
+comandos - Todos os comandos disponíveis podem ser encontrados aqui.
+jogador - Obtenha informações detalhadas sobre o perfil de um jogador.
+clan - Obtenha informações gerais sobre um clã.
+guerra - Obtenha informações sobre a guerra atual de um clã.
+bilhete - Obtenha informações sobre o bilhete dourado atual.
+tutorial - Imagem tutorial para conseguir a Tag, que serão utilizadas nos comandos.
+*/
+
 const menu = [
     "*### Comandos ###*\n",
     "*/comandos* \nTodos os comandos disponíveis podem ser encontrados aqui.\n",
