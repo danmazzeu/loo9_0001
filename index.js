@@ -170,7 +170,6 @@ async function sendAndScheduleDelete() {
     }
 }
 
-sendAndScheduleDelete();
 setInterval(sendAndScheduleDelete, sendInterval);
 
 async function getExternalIP() {
