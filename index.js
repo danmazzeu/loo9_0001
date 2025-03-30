@@ -40,13 +40,6 @@ bot.on("message", async (ctx) => {
         const chatId = ctx.chat.id;
         const now = Date.now();
 
-        console.log(ctx.chat.type);
-
-        if (ctx.chat.type === 'private') {
-            await ctx.reply('Este bot só funciona em grupos.\nSegue abaixo o link do grupo:\n\nhttps://t.me/loo9_clashofclans_pt', { parse_mode: "Markdown" });
-            return;
-        }
-
         console.log(`[${getMoment()}] Chat id: ${chatId}, User id: ${userId}`);
 
         if (userCooldown[userId] && now - userCooldown[userId] < 30000) {
@@ -71,6 +64,12 @@ bot.on("message", async (ctx) => {
         if (isNotAllowed) {
             await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
             await ctx.reply(`⚠️ *${ctx.from.first_name}* - Não é permitido enviar imagens, vídeos (exceto notas de vídeo), áudios (exceto mensagens de voz), links, localizações, carteiras, arquivos, enquetes ou contatos.`, { parse_mode: "Markdown" });
+            return;
+        }
+
+        if (ctx.chat.type === 'private') {
+            await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
+            await ctx.reply('Este bot só funciona em grupos.\nSegue abaixo o link do grupo:\n\nhttps://t.me/loo9_clashofclans_pt', { parse_mode: "Markdown" });
             return;
         }
 
