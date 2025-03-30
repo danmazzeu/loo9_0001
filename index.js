@@ -6,6 +6,7 @@ const { handleWarCommand } = require('./services/war');
 const { handleClanCommand } = require('./services/clan');
 const { handleGoldPassCommand } = require('./services/goldpass');
 const moment = require('moment');
+const axios = require('axios');
 
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
@@ -38,10 +39,8 @@ bot.on("message", async (ctx) => {
 
         if (
             ctx.message.photo || 
-            ctx.message.video || 
-            ctx.message.video_note ||
-            ctx.message.audio || 
-            ctx.message.voice ||
+            (ctx.message.video && !ctx.message.video_note) ||
+            (ctx.message.audio && !ctx.message.voice) ||
             ctx.message.entities?.some(entity => entity.type === 'url' || entity.type === 'text_link') || 
             ctx.message.location || 
             ctx.message.contact || 
@@ -50,7 +49,7 @@ bot.on("message", async (ctx) => {
             ctx.message.venue
         ) {
             await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
-            await ctx.reply(`⚠️ *${ctx.from.first_name}* - Não é permitido enviar imagens, vídeos, áudios, links, localizações, carteiras, arquivos, enquetes ou contatos.`, { parse_mode: "Markdown" });
+            await ctx.reply(`⚠️ *${ctx.from.first_name}* - Não é permitido enviar imagens, vídeos (exceto notas de vídeo), áudios (exceto mensagens de voz), links, localizações, carteiras, arquivos, enquetes ou contatos.`, { parse_mode: "Markdown" });
             return;
         }
 
@@ -169,12 +168,28 @@ async function sendAndScheduleDelete() {
 sendAndScheduleDelete();
 setInterval(sendAndScheduleDelete, sendInterval);
 
-bot.launch()
-    .then(() => console.log(`[${getMoment()}] Bot em execução`))
-    .catch(err => {
+async function getExternalIP() {
+    try {
+        const response = await axios.get('https://api.ipify.org?format=json');
+        return response.data.ip;
+    } catch (error) {
+        console.error(`[${getMoment()}] Erro ao obter IP externo: ${error.message}`, error);
+        return 'IP externo não disponível';
+    }
+}
+
+async function startBot() {
+    try {
+        const externalIP = await getExternalIP();
+        console.log(`[${getMoment()}] Bot em execução. IP externo: ${externalIP}`);
+        bot.launch();
+    } catch (err) {
         console.error(`[${getMoment()}] Erro ao iniciar o bot: ${err.message}`, err);
         process.exit(1);
-    });
+    }
+}
+
+startBot();
 
 process.on('unhandledRejection', (reason, promise) => {
     console.error(`[${getMoment()}] Unhandled Rejection at: ${promise}, reason: ${reason}`);
