@@ -42,6 +42,11 @@ bot.on("message", async (ctx) => {
 
         console.log(`[${getMoment()}] Chat id: ${chatId}, User id: ${userId}`);
 
+        if (ctx.chat.type === 'private') {
+            await ctx.reply('Este bot só funciona em grupos.\nSegue abaixo o link do grupo:\nhttps://t.me/loo9_clashofclans_pt', { parse_mode: "Markdown" });
+            return;
+        }
+
         if (userCooldown[userId] && now - userCooldown[userId] < 30000) {
             const timeLeft = Math.ceil((30000 - (now - userCooldown[userId])) / 1000);
             await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
@@ -130,67 +135,4 @@ bot.on("message", async (ctx) => {
     }
 });
 
-// Anúncios automáticos
-let lastMessageId = null;
-const multiply = 3;
-const sendInterval = 300000 * multiply; // 15 minutos
-const deleteInterval = 270000 * multiply; // 12 minutos
-
-async function sendAndScheduleDelete() {
-    const imagePath = path.join(__dirname, 'images', 'loo9.jpg');
-    const caption = `_Propaganda Automática (15 min)_\n\n*Precisando de automações?*\nhttps://loo9.com.br/`;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-
-    try {
-        const sentMessage = await bot.telegram.sendPhoto(chatId, { source: imagePath }, { caption, parse_mode: "Markdown" });
-        console.log(`[${getMoment()}] Imagem promocional enviada com sucesso.`);
-        lastMessageId = sentMessage.message_id;
-
-        setTimeout(async () => {
-            if (lastMessageId) {
-                try {
-                    await bot.telegram.deleteMessage(chatId, lastMessageId);
-                    console.log(`[${getMoment()}] Imagem promocional excluída.`);
-                } catch (error) {
-                    console.error(`[${getMoment()}] Erro ao excluir a mensagem: ${error.message}`, error);
-                }
-            }
-        }, deleteInterval);
-    } catch (error) {
-        console.error(`[${getMoment()}] Erro ao enviar a imagem: ${error.message}`, error);
-    }
-}
-
-setInterval(sendAndScheduleDelete, sendInterval);
-
-async function getExternalIP() {
-    try {
-        const response = await axios.get('https://api.ipify.org?format=json');
-        return response.data.ip;
-    } catch (error) {
-        console.error(`[${getMoment()}] Erro ao obter IP externo: ${error.message}`, error);
-        return 'IP externo não disponível';
-    }
-}
-
-async function startBot() {
-    try {
-        const externalIP = await getExternalIP();
-        console.log(`[${getMoment()}] Bot em execução. IP externo: ${externalIP}`);
-        bot.launch();
-    } catch (err) {
-        console.error(`[${getMoment()}] Erro ao iniciar o bot: ${err.message}`, err);
-        process.exit(1);
-    }
-}
-
-startBot();
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.error(`[${getMoment()}] Unhandled Rejection at: ${promise}, reason: ${reason}`);
-});
-
-process.on('uncaughtException', (error) => {
-    console.error(`[${getMoment()}] Uncaught Exception thrown: ${error.message}`, error);
-    process.exit(1);
-});
+// ... (o restante do seu código permanece o mesmo)
