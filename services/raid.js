@@ -35,6 +35,8 @@ const handleRaidCommand = async (ctx) => {
         const tag = clanTag[0];
         const raidInfo = await getRaidInfo(tag);
 
+        console.log(raidInfo);
+
         if (!raidInfo) {
             await ctx.reply(`*${userName}* - Clã não encontrado ou tag inválida.`, { parse_mode: "Markdown" });
             return;
