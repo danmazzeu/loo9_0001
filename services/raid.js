@@ -33,14 +33,14 @@ const handleRaidCommand = async (ctx) => {
         }
 
         const tag = clanTag[0];
-        const clanInfo = await getRaidInfo(tag);
+        const raidInfo = await getRaidInfo(tag);
 
-        if (!clanInfo) {
+        if (!raidInfo) {
             await ctx.reply(`*${userName}* - Clã não encontrado ou tag inválida.`, { parse_mode: "Markdown" });
             return;
         }
 
-        if (clanInfo.error) {
+        if (raidInfo.error) {
             await ctx.reply(`⚠️ *${userName}*, Servidor está em manutenção no momento. Tente novamente mais tarde.`, { parse_mode: "Markdown" });
             return;
         }
