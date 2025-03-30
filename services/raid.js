@@ -51,10 +51,9 @@ const handleRaidCommand = async (ctx) => {
 
         const recentRaids = raidInfo.items.slice(0, 5); // Pega os 5 raids mais recentes
 
-        for (let i = recentRaids.length - 1; i >= 0; i--) {
-            const raid = recentRaids[i];
+        recentRaids.forEach((raid, index) => {
             const state = raid.state === 'ongoing' ? 'Em andamento' : 'Concluído';
-            raidMessage += `*🏠 Raid ${recentRaids.length - i} (${state})*\n`;
+            raidMessage += `*🏠 Raid ${index + 1} (${state})*\n`;
 
             const startTime = raid.startTime;
             const endTime = raid.endTime;
@@ -75,7 +74,7 @@ const handleRaidCommand = async (ctx) => {
             raidMessage += `*Distritos Destruídos:* _${raid.enemyDistrictsDestroyed || 'Não disponível'}_\n`;
             raidMessage += `*Recompensa Ofensiva:* _${raid.offensiveReward || 'Não disponível'}_\n`;
             raidMessage += `*Recompensa Defensiva:* _${raid.defensiveReward || 'Não disponível'}_\n\n`;
-        }
+        });
 
         await sendLongMessage(ctx, raidMessage);
 
