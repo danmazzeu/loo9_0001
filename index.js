@@ -152,7 +152,7 @@ const deleteInterval = 240000 * multiply; // 4 minutos * X
 
 async function sendAndScheduleDelete() {
     const imagePath = path.join(__dirname, 'images', 'loo9.jpg');
-    const caption = `_Propaganda Automática (15 min)_\n\n*Precisando de automações?*\nhttps://loo9.com.br/`;
+    const caption = `_Propaganda Automática (15 min)_\n\n*Precisando de automações?*\nhttps://loo9.com.br`;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
     try {
