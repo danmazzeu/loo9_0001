@@ -1,9 +1,13 @@
-const { getRaidInfo } = require('../repositories/repository');
+const { getRaidInfo, getClanInfo } = require('../repositories/repository');
 const moment = require('moment-timezone');
 
 const MAX_MESSAGE_LENGTH = 4000;
 
 const sendLongMessage = async (ctx, message) => {
+    if (!message || message.trim().length === 0) {
+        return;
+    }
+
     while (message.length > 0) {
         let chunk = message.substring(0, MAX_MESSAGE_LENGTH);
         let lastNewline = chunk.lastIndexOf('\n');
@@ -40,40 +44,40 @@ const handleRaidCommand = async (ctx) => {
             return;
         }
 
-        let raidMessage = `*Histórico de Raids do Clã ${tag}*\n\n`;
+        const clanInfo = await getClanInfo(tag);
+        const clanName = clanInfo && clanInfo.name ? clanInfo.name : tag;
 
-        raidInfo.items.forEach((raid, index) => {
-            const startTime = moment(raid.startTime).tz('America/Sao_Paulo').format('DD/MM/YYYY - HH:mm:ss');
-            const endTime = moment(raid.endTime).tz('America/Sao_Paulo').format('DD/MM/YYYY - HH:mm:ss');
+        let raidMessage = `# 5 Raids Mais Recentes do Clã *${clanName}*\n\n`;
 
-            raidMessage += `*Raid ${index + 1} (${raid.state})*\n`;
-            raidMessage += `Início: ${startTime}\n`;
-            raidMessage += `Fim: ${endTime}\n`;
-            raidMessage += `Saque Total: ${raid.capitalTotalLoot}\n`;
-            raidMessage += `Raids Concluídos: ${raid.raidsCompleted}\n`;
-            raidMessage += `Ataques Totais: ${raid.totalAttacks}\n`;
-            raidMessage += `Distritos Destruídos: ${raid.enemyDistrictsDestroyed}\n`;
-            raidMessage += `Recompensa Ofensiva: ${raid.offensiveReward}\n`;
-            raidMessage += `Recompensa Defensiva: ${raid.defensiveReward}\n\n`;
+        const recentRaids = raidInfo.items.slice(0, 5); // Pega os 5 raids mais recentes
 
-            if (raid.defenseLog && raid.defenseLog.length > 0) {
-                raidMessage += `🔰 *Defesa do Clã*\n`;
-                raid.defenseLog.forEach((defense, dIndex) => {
-                    raidMessage += `🔹 *Defesa ${dIndex + 1}*\n`;
-                    if (defense.defender) {
-                        raidMessage += `Defensor: ${defense.defender.name} (Tag: ${defense.defender.tag})\n`;
-                        raidMessage += `Nível: ${defense.defender.level}\n`;
-                    } else {
-                        raidMessage += `Defensor: Desconhecido\n`;
-                    }
-                    raidMessage += `Ataques Sofridos: ${defense.attackCount}\n`;
-                    raidMessage += `Distritos Atacados: ${defense.districtCount}\n`;
-                    raidMessage += `Distritos Destruídos: ${defense.districtsDestroyed}\n\n`;
-                });
-            }
+        recentRaids.forEach((raid, index) => {
+            const state = raid.state === 'ongoing' ? 'Em andamento' : 'Concluído';
+            raidMessage += `*🏠 Raid ${index + 1} (${state})*\n`;
+
+            const startTime = raid.startTime;
+            const endTime = raid.endTime;
+
+            const startTimeFormatted = startTime
+                ? moment.utc(startTime).tz('America/Sao_Paulo').format('DD/MM/YYYY')
+                : 'Não disponível';
+            const endTimeFormatted = endTime
+                ? moment.utc(endTime).tz('America/Sao_Paulo').format('DD/MM/YYYY')
+                : 'Não disponível';
+
+            raidMessage += `*Início:* _${startTimeFormatted}_\n`;
+            raidMessage += `*Fim:* _${endTimeFormatted}_\n`;
+
+            raidMessage += `*Saque Total:* _${raid.capitalTotalLoot || 'Não disponível'}_\n`;
+            raidMessage += `*Raids Concluídos:* _${raid.raidsCompleted || 'Não disponível'}_\n`;
+            raidMessage += `*Ataques Totais:* _${raid.totalAttacks || 'Não disponível'}_\n`;
+            raidMessage += `*Distritos Destruídos:* _${raid.enemyDistrictsDestroyed || 'Não disponível'}_\n`;
+            raidMessage += `*Recompensa Ofensiva:* _${raid.offensiveReward || 'Não disponível'}_\n`;
+            raidMessage += `*Recompensa Defensiva:* _${raid.defensiveReward || 'Não disponível'}_\n\n`;
         });
 
         await sendLongMessage(ctx, raidMessage);
+
     } catch (error) {
         console.error("Erro no comando /raid:", error);
         await ctx.reply("Ocorreu um erro ao processar o comando. Tente novamente mais tarde.", { parse_mode: "Markdown" });

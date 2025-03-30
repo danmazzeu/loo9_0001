@@ -134,7 +134,7 @@ bot.on("message", async (ctx) => {
 let lastMessageId = null;
 const multiply = 3;
 const sendInterval = 300000 * multiply; // 15 minutos
-const deleteInterval = 240000 * multiply; // 12 minutos
+const deleteInterval = 270000 * multiply; // 12 minutos
 
 async function sendAndScheduleDelete() {
     const imagePath = path.join(__dirname, 'images', 'loo9.jpg');
