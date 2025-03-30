@@ -4,7 +4,7 @@
   "description": "Bot do Telegram para buscar informações de clãs do Clash of Clans",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node --trace-deprecation index.js"
   },
   "keywords": [
     "clashofclans",
