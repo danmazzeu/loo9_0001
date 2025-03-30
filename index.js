@@ -23,17 +23,6 @@ const welcomeMessage = (firstName) => [
     "Digite */comandos* para ver as opções de comandos."
 ].join("\n");
 
-/* 
-start - Mensagem de boas vindas.
-comandos - Todos os comandos disponíveis podem ser encontrados aqui.
-jogador - Obtenha informações detalhadas sobre o perfil de um jogador.
-clan - Obtenha informações gerais sobre um clã.
-raid - Obtenha informações gerais sobre uma raid.
-guerra - Obtenha informações sobre a guerra atual de um clã.
-bilhete - Obtenha informações sobre o bilhete dourado atual.
-tutorial - Imagem tutorial para conseguir a Tag, que serão utilizadas nos comandos.
-*/
-
 const menu = [
     "*### Comandos ###*\n",
     "*/comandos* \nTodos os comandos disponíveis podem ser encontrados aqui.\n",
@@ -49,31 +38,31 @@ bot.on("message", async (ctx) => {
     try {
         const userId = ctx.from.id;
         const chatId = ctx.chat.id;
-        console.log('Chat id: ' + chatId);
+        const now = Date.now();
+
+        console.log(`[${getMoment()}] Chat id: ${chatId}, User id: ${userId}`);
 
         if (userCooldown[userId] && now - userCooldown[userId] < 30000) {
             const timeLeft = Math.ceil((30000 - (now - userCooldown[userId])) / 1000);
-
-            await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
-
+            await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
             await ctx.reply(`⏳ *${ctx.from.first_name}* - Por favor, aguarde ${timeLeft} segundos antes de enviar outra solicitação.`, { parse_mode: "Markdown" });
             return;
         }
 
         userCooldown[userId] = now;
 
-        if (
-            ctx.message.photo || 
+        const isNotAllowed = ctx.message.photo ||
             (ctx.message.video && !ctx.message.video_note) ||
             (ctx.message.audio && !ctx.message.voice) ||
-            ctx.message.entities?.some(entity => entity.type === 'url' || entity.type === 'text_link') || 
-            ctx.message.location || 
-            ctx.message.contact || 
-            ctx.message.document || 
+            ctx.message.entities?.some(entity => entity.type === 'url' || entity.type === 'text_link') ||
+            ctx.message.location ||
+            ctx.message.contact ||
+            ctx.message.document ||
             ctx.message.sticker ||
-            ctx.message.venue
-        ) {
-            await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
+            ctx.message.venue;
+
+        if (isNotAllowed) {
+            await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
             await ctx.reply(`⚠️ *${ctx.from.first_name}* - Não é permitido enviar imagens, vídeos (exceto notas de vídeo), áudios (exceto mensagens de voz), links, localizações, carteiras, arquivos, enquetes ou contatos.`, { parse_mode: "Markdown" });
             return;
         }
@@ -96,7 +85,7 @@ bot.on("message", async (ctx) => {
         const command = messageText ? messageText.split(" ")[0].toLowerCase() : '';
 
         if (messageText && !messageText.startsWith("/")) {
-            await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
+            await ctx.telegram.deleteMessage(chatId, ctx.message.message_id);
             await ctx.reply(welcomeMessage(ctx.from.first_name), { parse_mode: "Markdown" });
             return;
         }
@@ -106,42 +95,31 @@ bot.on("message", async (ctx) => {
                 await ctx.reply(welcomeMessage(ctx.from.first_name), { parse_mode: "Markdown" });
                 console.log(`[${getMoment()}] ${ctx.from.first_name}: /start`);
                 break;
-
             case "/comandos":
                 await ctx.reply(menu, { parse_mode: "Markdown" });
                 console.log(`[${getMoment()}] ${ctx.from.first_name}: /comandos`);
                 break;
-
             case "/jogador":
                 await handlePlayerCommand(ctx);
                 break;
-
             case "/clan":
                 await handleClanCommand(ctx);
                 break;
-
             case "/raid":
                 await handleRaidCommand(ctx);
                 break;
-
             case "/guerra":
                 await handleWarCommand(ctx);
                 break;
-
             case "/bilhete":
                 await handleGoldPassCommand(ctx);
                 break;
-
             case "/tutorial":
                 const imagePath = path.join(__dirname, 'images', 'tutorial.jpg');
-                let tutorialMessage = `*${ctx.from.first_name}*, aqui está o tutorial para encontrar sua Tag! Depois, use */comandos* para explorar as opções.`;                
-                await ctx.replyWithPhoto({ source: imagePath }, {
-                    caption: tutorialMessage,
-                    parse_mode: "Markdown"
-                });
+                const tutorialMessage = `*${ctx.from.first_name}*, aqui está o tutorial para encontrar sua Tag! Depois, use */comandos* para explorar as opções.`;
+                await ctx.replyWithPhoto({ source: imagePath }, { caption: tutorialMessage, parse_mode: "Markdown" });
                 console.log(`[${getMoment()}] ${ctx.from.first_name}: /tutorial`);
                 break;
-
             default:
                 await ctx.reply(`⚠️ Comando desconhecido. Use */comandos* para ver as opções disponíveis.`, { parse_mode: "Markdown" });
                 break;
@@ -152,11 +130,11 @@ bot.on("message", async (ctx) => {
     }
 });
 
-// Ads
+// Anúncios automáticos
 let lastMessageId = null;
 const multiply = 3;
-const sendInterval = 300000 * multiply; // 5 minutos * X
-const deleteInterval = 240000 * multiply; // 4 minutos * X
+const sendInterval = 300000 * multiply; // 15 minutos
+const deleteInterval = 240000 * multiply; // 12 minutos
 
 async function sendAndScheduleDelete() {
     const imagePath = path.join(__dirname, 'images', 'loo9.jpg');
