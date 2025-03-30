@@ -1,0 +1,23 @@
+{
+  "name": "clashlumnibot",
+  "version": "1.0.0",
+  "description": "Bot do Telegram para buscar informações de clãs do Clash of Clans",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "clashofclans",
+    "telegram-bot",
+    "coc-api"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "dotenv": "^16.4.7",
+    "moment-timezone": "^0.5.48",
+    "telegraf": "^4.16.3",
+    "utf8": "^3.0.0"
+  }
+}
