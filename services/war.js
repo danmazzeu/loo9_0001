@@ -66,7 +66,7 @@ const handleWarCommand = async (ctx) => {
         if (warInfo.state === 'notInWar') {
             const noWarMessage = [
                 `\# Informações da Guerra (Solicitado por: *${user}*)\n`,
-                `O clã não está em guerra no momento.`
+                `Achio que esse clan não gosta de lutinha, ele não está em guerra no momento.`
             ].join("\n");
             await ctx.reply(noWarMessage, { parse_mode: 'Markdown' });
             return;
