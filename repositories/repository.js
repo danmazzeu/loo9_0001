@@ -1,6 +1,6 @@
 const axios = require('axios');
 const CLASH_API_URL = 'https://api.clashofclans.com/v1';
-const headers = { 'Authorization': `Bearer ${process.env.CLASH_TOKEN}` };
+const headers = { 'Authorization': `Bearer ${process.env.CLASH_LOCAL_TEST}` };
 
 const handleApiError = (error) => {
     if (error.response) {

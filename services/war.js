@@ -61,6 +61,17 @@ const handleWarCommand = async (ctx) => {
         }
 
         const warInfo = await getWarInfo(clanTag);
+        console.log(warInfo);
+
+        if (warInfo.state === 'notInWar') {
+            const noWarMessage = [
+                `\# Informações da Guerra (Solicitado por: *${user}*)\n`,
+                `O clã não está em guerra no momento.`
+            ].join("\n");
+            await ctx.reply(noWarMessage, { parse_mode: 'Markdown' });
+            return;
+        }
+
         const warResult = warInfo.clan.stars && warInfo.opponent.stars
             ? warInfo.clan.stars > warInfo.opponent.stars 
                 ? "🏆 _Vitória_" 
@@ -69,7 +80,7 @@ const handleWarCommand = async (ctx) => {
 
         const warMessage = [
             `\# Informações da Guerra Atual (Solicitado por: *${user}*)\n`,
-            `\n### Informações do Clan *${warInfo.clan.name}* ###`,
+            `### Informações do Clan *${warInfo.clan.name}* ###`,
             `*Nome do Clan*: _${warInfo.clan.name}_`,
             `*Tag do Clan*: _${warInfo.clan.tag}_`,
             `*Nível do Clan*: _${warInfo.clan.clanLevel}_`,
